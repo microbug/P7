@@ -54,17 +54,26 @@ MainWindow::~MainWindow() {
 void SudokuTable::resizeEvent(QResizeEvent *event)
 {
     event->accept();
+    static bool ignore_event = false;
+    qDebug() << "resize, x=" << event->size().width() << ", y=" << event->size().height();
 
-    int table_width;
-    if (event->size().width() > event->size().height()) {  // resize to the smaller of the two dimensions
-        table_width = event->size().height();
+    if (!ignore_event) {
+        int table_width;
+        if (event->size().width() > event->size().height()) {  // resize to the smaller of the two dimensions
+            table_width = event->size().height();
+        } else {
+            table_width = event->size().width();
+        }
+
+        QWidget::resize(table_width, table_width);
+        ignore_event = true;
+        this->verticalHeader()->setDefaultSectionSize(table_width / GRID_WIDTH);
+        ignore_event = true;
+        this->horizontalHeader()->setDefaultSectionSize(table_width / GRID_WIDTH);
+        ignore_event = true;
     } else {
-        table_width = event->size().width();
+        ignore_event = false;
     }
-
-    QWidget::resize(table_width, table_width);
-    this->verticalHeader()->setDefaultSectionSize(table_width / GRID_WIDTH);
-    this->horizontalHeader()->setDefaultSectionSize(table_width / GRID_WIDTH);
 
 }
 
