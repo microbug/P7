@@ -18,6 +18,7 @@
 #include <algorithm>
 #include <cmath>
 #include <QApplication>
+#include <QPushButton>
 
 
 namespace Ui {
@@ -31,6 +32,7 @@ public:
     using QTableWidget::QTableWidget;  // inherit the constructor
 
     void resizeEvent(QResizeEvent* event);
+    void editItem(QTableWidgetItem* item);
 };
 
 class MainWindow : public QWidget
