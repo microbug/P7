@@ -14,19 +14,22 @@
 #include <QDebug>
 #include <QFrame>
 #include <QResizeEvent>
+#include <QThread>
+#include <algorithm>
+#include <cmath>
+#include <QApplication>
 
 
 namespace Ui {
     class MainWindow;
 }
 
-class SudokuTable: public QTableWidget {
+class SudokuGrid: public QTableWidget {
     Q_OBJECT
 
 public:
-    using QTableWidget::QTableWidget;
-    //explicit SudokuTable(QWidget *parent = nullptr);
-    //~SudokuTable();
+    using QTableWidget::QTableWidget;  // inherit the constructor
+
     void resizeEvent(QResizeEvent* event);
 };
 
@@ -39,11 +42,13 @@ public:
     ~MainWindow();
     QVBoxLayout* vbox;
     QHBoxLayout* sudoku_grid_container;
-    SudokuTable* sudoku_grid;
+    SudokuGrid* sudoku_grid;
     //void resizeEvent(QResizeEvent *event);
 
 private:
     //Ui::MainWindow *ui;
 };
+
+void sudokuEditItem(QTableWidgetItem* item);
 
 #endif // MAINWINDOW_H
