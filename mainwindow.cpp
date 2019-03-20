@@ -1,5 +1,4 @@
 #include "mainwindow.hpp"
-#include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     this->vbox = new QVBoxLayout(this);
@@ -20,45 +19,43 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     this->sudoku_grid->setStyleSheet(style);
     this->sudoku_grid->setFrameStyle(QFrame::Plain | QFrame::Box);
 
-    this->sudoku_grid->setRowCount(GRID_WIDTH);
+    this->sudoku_grid->setRowCount(GRID_WIDTH);    // add the right number of cells to the grid
     this->sudoku_grid->setColumnCount(GRID_WIDTH);
 
-
     this->sudoku_grid->horizontalHeader()->setVisible(false);  // hide table header
-    this->sudoku_grid->horizontalHeader()->setMinimumSectionSize(0);  // set minimum
-    //this->sudoku_grid->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+    // remove cell minimum size restriction (this will be limited by minimum window size)
+    this->sudoku_grid->horizontalHeader()->setMinimumSectionSize(0);
     this->sudoku_grid->verticalHeader()->setVisible(false);
     this->sudoku_grid->verticalHeader()->setMinimumSectionSize(0);
-    //this->sudoku_grid->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-    this->sudoku_grid->resizeColumnsToContents();
 
-    // adapted from https://stackoverflow.com/a/37615363
     this->sudoku_grid->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->sudoku_grid->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //this->sudoku_grid->setFixedSize(this->sudoku_grid->horizontalHeader()->length() + 2,
-    //                                this->sudoku_grid->verticalHeader()->length() + 2);
 
-
-    // the hbox container makes sure the grid is centred horizontally
+    // the hbox container allows us to use stretch items
+    //   to keep the sudoku puzzle centered in the window
     this->sudoku_grid_container = new QHBoxLayout();
+    this->sudoku_grid_container->addStretch();
     this->sudoku_grid_container->addWidget(this->sudoku_grid);
+    this->sudoku_grid_container->addStretch();
     this->vbox->addLayout(this->sudoku_grid_container);
     this->setLayout(vbox);
 }
 
 
 MainWindow::~MainWindow() {
-    //delete ui;
+    delete sudoku_grid;
+    delete sudoku_grid_container;
+    delete vbox;
 }
 
-void SudokuTable::resizeEvent(QResizeEvent *event)
-{
+void SudokuTable::resizeEvent(QResizeEvent *event) {
+    // adapted from https://forum.qt.io/topic/78828/3
     event->accept();
-    static bool ignore_event = false;
+    static bool ignore_event = false;  // static => the value carrys over between function calls
     qDebug() << "resize, x=" << event->size().width() << ", y=" << event->size().height();
 
     if (!ignore_event) {
-        int table_width;
+        int table_width;  // width / height of the whole sudoku puzzle
         if (event->size().width() > event->size().height()) {  // resize to the smaller of the two dimensions
             table_width = event->size().height();
         } else {
@@ -66,7 +63,7 @@ void SudokuTable::resizeEvent(QResizeEvent *event)
         }
 
         QWidget::resize(table_width, table_width);
-        ignore_event = true;
+        ignore_event = true;  // the above triggers another event, which should be ignored
         this->verticalHeader()->setDefaultSectionSize(table_width / GRID_WIDTH);
         ignore_event = true;
         this->horizontalHeader()->setDefaultSectionSize(table_width / GRID_WIDTH);
