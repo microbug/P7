@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
     this->vbox->addLayout(this->sudoku_grid_container);
 
     QPushButton *testButton = new QPushButton("Test");
-    vbox->addWidget(testButton);
+    this->vbox->addWidget(testButton);
 
     // `this` is the MainWindow object (declared in main.cpp)
     // MainWindow::setLayout(vbox) fills the window with the layout `vbox`,
@@ -51,18 +51,19 @@ MainWindow::MainWindow(QWidget *parent) : QWidget(parent) {
 
 
 void SudokuGrid::editItem(QTableWidgetItem* item) {
-    qDebug() << item->text();  // print whatever the user wrote to debug console
+    qDebug() << "user entered: " << item->text();  // print whatever the user wrote to debug console
 
     static bool ignore_events = false;  // static => the value carrys over between function calls
     if (!ignore_events) {
         item->setText("2");  // every time the user changes an item, set it to 2
-        ignore_events = true;  // stop this function from running again (setText edits the item so it will call this function again)
+        //ignore_events = true;  // stop this function from running again (setText edits the item so it will call this function again)
     } else {
         ignore_events = false;
     }
 }
 
 
+// this function makes sure that the table is square whenever it is resized
 void SudokuGrid::resizeEvent(QResizeEvent *event) {
     // adapted from https://forum.qt.io/topic/78828/3
     event->accept();
